@@ -8,14 +8,13 @@ import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
 import axios, { AxiosResponse, AxiosError } from 'axios';
 import { AppDispatch } from '../store/reduxTypes';
-import { addToCart } from '../store/cartActions'; // Correct import statement
+import { addToCart } from '../store/cartActions'; 
 
 
 
 interface Car {
     metadata: { tags: string[] };
     sys: {
-        // ... sys properties ...
         id: string
     };
     fields: {
@@ -26,7 +25,7 @@ interface Car {
 }
 
 interface Item {
-    id: string; // Adjust the type as needed
+    id: string;
     title: string;
     price: number;
     photo: string;
@@ -41,7 +40,7 @@ function Content() {
     const [cars, setCars] = useState<Car[]>([]);
     const accessToken = 'VPmo2U661gTnhMVx0pc0-CtahNg_aqS5DuneLtYfO1o';
 
-    const dispatch: AppDispatch = useDispatch(); // Create a dispatch function
+    const dispatch: AppDispatch = useDispatch(); 
 
 
 
@@ -67,7 +66,7 @@ function Content() {
 
     const handleAddToCart = (car: Car) => {
         const item: Item = {
-            id: car.sys.id, // Generate a unique ID for the item
+            id: car.sys.id, 
             title: car.fields.title,
             price: car.fields.price,
             photo: car.fields.photo,

@@ -23,7 +23,6 @@ interface CartModalProps {
 interface Discount {
     metadata: { tags: string[] };
     sys: {
-        // ... sys properties ...
         id: string
     };
     fields: {
@@ -38,14 +37,14 @@ interface DiscountsResponse {
 }
 
 const CartModal: React.FC<CartModalProps> = ({ isOpen, onClose }) => {
-    // Get the cart items from the Redux store
+
     const accessToken = 'VPmo2U661gTnhMVx0pc0-CtahNg_aqS5DuneLtYfO1o';
     const [discount, setDiscount] = useState<Discount[]>([])
-    const [couponCode, setCouponCode] = useState(''); // Declare couponCode state
+    const [couponCode, setCouponCode] = useState('');
     const cartItems = useSelector((state: RootState) => state.cart);
-    // Calculate subtotal, discountAmount, and grandTotal based on cartItems
+
     const subtotal = cartItems.reduce((total, item) => total + item.price * item.amount, 0);
-    const discountPercentage = 10; // Example discount percentage
+    const discountPercentage = 10;
     const discountAmount = (subtotal * discountPercentage) / 100;
     const grandTotal = subtotal - discountAmount;
 
@@ -53,11 +52,11 @@ const CartModal: React.FC<CartModalProps> = ({ isOpen, onClose }) => {
 
 
     const handleIncreaseQuantity = (itemId: string) => {
-        dispatch(increaseCartItemQuantity(itemId)); // Dispatch action to increase quantity
+        dispatch(increaseCartItemQuantity(itemId));
     };
 
     const handleDecreaseQuantity = (itemId: string) => {
-        dispatch(decreaseCartItemQuantity(itemId)); // Dispatch action to decrease quantity
+        dispatch(decreaseCartItemQuantity(itemId));
     };
 
     useEffect(() => {
@@ -90,11 +89,11 @@ const CartModal: React.FC<CartModalProps> = ({ isOpen, onClose }) => {
         const appliedDiscount = discount.find(item => item.fields.code === couponCode);
 
         if (appliedDiscount) {
-            const couponDiscountPercentage = appliedDiscount.fields.amount / 100; // Divide by 100
+            const couponDiscountPercentage = appliedDiscount.fields.amount / 100;
             const newDiscountAmount = (subtotal * couponDiscountPercentage);
             const newGrandTotal = subtotal - newDiscountAmount;
 
-            // Update the UI directly
+
             const discountAmountElement = document.getElementById('discountAmount');
             if (discountAmountElement) {
                 discountAmountElement.textContent = `${newDiscountAmount.toFixed(2)} THB`;
@@ -105,7 +104,7 @@ const CartModal: React.FC<CartModalProps> = ({ isOpen, onClose }) => {
                 grandTotalElement.textContent = `${newGrandTotal.toFixed(2)} THB`;
             }
         } else {
-            // Coupon code is not valid, handle accordingly
+            return
         }
     };
 

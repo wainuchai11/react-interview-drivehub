@@ -1,7 +1,6 @@
-// cartActions.ts
+
 import { Item } from "./types";
 
-// cartActions.ts
 
 export const ADD_TO_CART = "ADD_TO_CART";
 
@@ -16,7 +15,6 @@ export const addToCart = (item: Item): AddToCartAction => {
     payload: item,
   };
 };
-// cartActions.ts
 
 export const INCREASE_CART_ITEM_QUANTITY = "INCREASE_CART_ITEM_QUANTITY";
 export const DECREASE_CART_ITEM_QUANTITY = "DECREASE_CART_ITEM_QUANTITY";

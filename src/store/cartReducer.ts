@@ -1,4 +1,3 @@
-// cartReducer.ts
 import {
   ADD_TO_CART,
   INCREASE_CART_ITEM_QUANTITY,
