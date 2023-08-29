@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import Modal from '@mui/material/Modal';
 import Box from '@mui/material/Box';
@@ -12,6 +12,7 @@ import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import CardMedia from '@mui/material/CardMedia';
 import Divider from '@mui/material/Divider';
+import axios, { AxiosResponse, AxiosError } from 'axios';
 
 
 interface CartModalProps {
@@ -19,9 +20,27 @@ interface CartModalProps {
     onClose: () => void;
 }
 
+interface Discount {
+    metadata: { tags: string[] };
+    sys: {
+        // ... sys properties ...
+        id: string
+    };
+    fields: {
+        amount: number
+        code: string
+    };
+}
+
+
+interface DiscountsResponse {
+    items: Discount[];
+}
+
 const CartModal: React.FC<CartModalProps> = ({ isOpen, onClose }) => {
     // Get the cart items from the Redux store
-
+    const accessToken = 'VPmo2U661gTnhMVx0pc0-CtahNg_aqS5DuneLtYfO1o';
+    const [discount, setDiscount] = useState<Discount[]>([])
     const [couponCode, setCouponCode] = useState(''); // Declare couponCode state
     const cartItems = useSelector((state: RootState) => state.cart);
     // Calculate subtotal, discountAmount, and grandTotal based on cartItems
@@ -41,6 +60,54 @@ const CartModal: React.FC<CartModalProps> = ({ isOpen, onClose }) => {
         dispatch(decreaseCartItemQuantity(itemId)); // Dispatch action to decrease quantity
     };
 
+    useEffect(() => {
+        const fetchDiscount = async () => {
+            try {
+                const response: AxiosResponse<DiscountsResponse> = await axios.get(
+                    'https://cdn.contentful.com/spaces/vveq832fsd73/entries?content_type=discount',
+                    {
+                        headers: {
+                            Authorization: `Bearer ${accessToken}`,
+                        },
+                    }
+                );
+                setDiscount(response.data.items);
+                console.log('discount : ', response.data.items)
+            } catch (error: any) {
+                console.error('Error:', error.message);
+            }
+        };
+
+        fetchDiscount();
+    }, []);
+
+    const totalPriceBeforeDiscount = cartItems.reduce(
+        (total, item) => total + item.price * item.amount,
+        0
+    );
+
+    const handleApplyCoupon = () => {
+        const appliedDiscount = discount.find(item => item.fields.code === couponCode);
+
+        if (appliedDiscount) {
+            const couponDiscountPercentage = appliedDiscount.fields.amount / 100; // Divide by 100
+            const newDiscountAmount = (subtotal * couponDiscountPercentage);
+            const newGrandTotal = subtotal - newDiscountAmount;
+
+            // Update the UI directly
+            const discountAmountElement = document.getElementById('discountAmount');
+            if (discountAmountElement) {
+                discountAmountElement.textContent = `${newDiscountAmount.toFixed(2)} THB`;
+            }
+
+            const grandTotalElement = document.getElementById('grandTotal');
+            if (grandTotalElement) {
+                grandTotalElement.textContent = `${newGrandTotal.toFixed(2)} THB`;
+            }
+        } else {
+            // Coupon code is not valid, handle accordingly
+        }
+    };
 
     return (
         <Modal
@@ -85,7 +152,7 @@ const CartModal: React.FC<CartModalProps> = ({ isOpen, onClose }) => {
                                         </Typography>
                                         <br />
                                         <Typography variant='caption'>
-                                            {item.price}/day
+                                            {item.price}/Day
                                         </Typography>
                                     </div>
 
@@ -111,9 +178,6 @@ const CartModal: React.FC<CartModalProps> = ({ isOpen, onClose }) => {
                                     </div>
                                 </div>
                             </div>
-
-
-
                         </Card>
                     </div>
                 ))}
@@ -125,13 +189,20 @@ const CartModal: React.FC<CartModalProps> = ({ isOpen, onClose }) => {
                     size="small"
                     fullWidth
                 />
-                <Typography variant="subtitle1" sx={{ marginTop: 1 }}>
+                <Button
+                    variant="outlined"
+                    onClick={handleApplyCoupon}
+                    sx={{ marginTop: 1 }}
+                >
+                    Apply Coupon
+                </Button>
+                <Typography variant="subtitle1">
                     <div style={{
                         display: 'flex',
                         justifyContent: 'space-between'
                     }}>
-                        <span style={{ fontWeight: 'bold' }}>Subtotal:</span>
-                        <span>{subtotal} THB</span>
+                        <span style={{ fontWeight: 'bold' }}>Total Before Discount: </span>
+                        <span>{totalPriceBeforeDiscount} THB</span>
                     </div>
                 </Typography>
                 <Divider />
@@ -141,17 +212,7 @@ const CartModal: React.FC<CartModalProps> = ({ isOpen, onClose }) => {
                         justifyContent: 'space-between'
                     }}>
                         <span style={{ fontWeight: 'bold' }}>Discount: </span>
-                        <span>{discountAmount} THB</span>
-                    </div>
-                </Typography>
-                <Divider />
-                <Typography variant="subtitle1">
-                    <div style={{
-                        display: 'flex',
-                        justifyContent: 'space-between'
-                    }}>
-                        <span style={{ fontWeight: 'bold' }}>Grand Total: </span>
-                        <span>{grandTotal} THB</span>
+                        <span id="discountAmount">{discountAmount.toFixed(2)} THB</span>
                     </div>
                 </Typography>
             </Box>
