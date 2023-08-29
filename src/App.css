@@ -1,30 +1,30 @@
 .app-footer {
-  position: fixed;
   bottom: 0px;
   left: 0px;
   right: 0px;
-  background: #0073fa;
-  color: #fff;
+  background: #111827 !important;
+  color: #fff !important;
   text-align: center;
   height: 80px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+  display: flex !important;
+  align-content: center !important;
+  justify-content: space-between !important;
   font-size: 18px;
   font-weight: 600;
+
 }
 
 .app-header {
-  background: #0073fa;
+  background: #fff !important;
   color: #fff;
   height: 80px;
-  display: flex;
-  align-items: center;
   padding-left: 40px;
 }
+
 .app-header img {
-  height: 50px;
+  height: 24px;
 }
+
 .app-header span {
   font-size: 30px;
   font-weight: 600;
