@@ -104,12 +104,15 @@ function Content() {
                             style={{ objectFit: 'cover' }}
                         />
                         <CardContent>
-                            <Typography gutterBottom variant="h5" component="div">
-                                {car.fields.title}
-                            </Typography>
-                            <Typography variant="body2" color="text.secondary">
-                                Price: ${car.fields.price}
-                            </Typography>
+                            <div style={{ marginBottom: '1rem' }}>
+                                <Typography gutterBottom variant="h5" component="div">
+                                    {car.fields.title}
+                                </Typography>
+                                <Typography variant="body2" color="text.secondary">
+                                    {car.fields.price} THB/Day
+                                </Typography>
+                            </div>
+
                             <Button
                                 variant='contained'
                                 color="primary"
